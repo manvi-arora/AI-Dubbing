@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI</title>
+    <style>
+            /* Set a background color and text color for the body */
+body {
+    background-color: #f8f8f8; /* Light gray background */
+    color: #333;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Style the heading */
+h1 {
+    font-size: 32px; /* Larger font size for the heading */
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    color: #007bff;
+}
+
+/* Style the form container */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the label and select elements */
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #555;
+}
+
+select, input[type="text"], input[type="file"] {
+    width: 100%;
+    padding: 12px; /* Larger padding for inputs */
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s; /* Add transitions for better interaction */
+}
+
+select:focus, input[type="text"]:focus, input[type="file"]:focus {
+    outline: none; /* Remove the default focus outline */
+    border-color: #007bff; /* Highlight the input with a blue border on focus */
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.6); /* Add a subtle box shadow on focus */
+}
+
+/* Style the submit button */
+button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 14px 28px; /* Larger padding for buttons */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px; /* Larger font size for the button text */
+    transition: background-color 0.2s;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Style the video player */
+video {
+    max-width: 100%;
+    margin-top: 20px;
+    display: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Slightly larger and softer box shadow */
+}
+
+/* Style for the translated summary */
+#translated_summary {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 20px; /* More padding for summary text */
+    border-radius: 10px;
+    font-size: 18px;
+    text-align: left;
+    background-color: #fff; /* White background for the summary box */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    line-height: 1.5; /* Improved line spacing for readability */
+}
+
+/* Style for the error messages */
+ul {
+    list-style: none;
+    color: #d9534f; /* Red color for error messages */
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    button[type="submit"] {
+        font-size: 18px;
+    }
+
+    #translated_summary {
+        font-size: 16px;
+    }
+}
+    </style>
+</head>
+<body>
+    <h1>AI Video Dubbing</h1>
+    <p>Enter a YouTube video link or upload a video file, then select the target language for dubbing:</p>
+
+    <form method="POST" action="/" enctype="multipart/form-data">
+        <label for="input_method">Select Input Method:</label>
+        <select name="input_method" id="input_method" required>
+            <option value="youtube_link">YouTube Link</option>
+            <option value="file_upload">Upload Video File</option>
+        </select>
+
+        <div id="youtube_input" style="display: none;">
+            <label for="youtube_link">YouTube Video Link:</label>
+            <input type="text" name="youtube_link" id="youtube_link">
+        </div>
+
+        <div id="file_input" style="display: none;">
+            <label for="file">Upload Video File:</label>
+            <input type="file" name="file" id="file">
+        </div>
+
+        <label for="target_language">Target Language:</label>
+        <select name="target_language" id="target_language" required>
+            <option value="gu">Gujarati</option>
+            <!-- Add more language options as needed -->
+        </select>
+
+        <input type="submit" value="Dub Video">
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    {% if youtube_link %}
+        <h2>YouTube Video Link:</h2>
+        <a href="{{ url_for('download') }}" download="dubbed_video.mp4">Download Dubbed Video</a>
+    {% endif %}
+
+    {% if uploaded_file %}
+        <h2>Uploaded Video:</h2>
+        <a href="{{ url_for('download') }}" download="dubbed_video.mp4">Download Dubbed Video</a>
+    {% endif %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const inputMethodSelect = document.getElementById("input_method");
+            const youtubeInput = document.getElementById("youtube_input");
+            const fileInput = document.getElementById("file_input");
+            const translatedSummary = document.getElementById("translated_summary");
+    
+            inputMethodSelect.addEventListener("change", function() {
+                if (inputMethodSelect.value === "youtube_link") {
+                    youtubeInput.style.display = "block";
+                    fileInput.style.display = "none";
+                } else if (inputMethodSelect.value === "file_upload") {
+                    youtubeInput.style.display = "none";
+                    fileInput.style.display = "block";
+                }
+            });
+    
+        });
+    </script>
+</body>
+</html>
